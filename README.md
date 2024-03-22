@@ -23,7 +23,7 @@ To use `persianCalendar` in your Maven project, add the following dependency to 
 <dependency>
     <groupId>org.sohagroup</groupId>
     <artifactId>persianCalendar</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-RELEASE</version>
 </dependency>
 ```
 

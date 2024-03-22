@@ -17,10 +17,8 @@
 package org.sohagroup.persiancalendar;
 
 /**
- * @service-package: org.sohagroup.persiancalendar
- * @author: ehsan, moradi@sohagroup.org
- * @added-date: 3/21/24 : 3:27 PM
- * @since: 1.0.0
+ * @author : ehsan, moradi@sohagroup.org
+ * @since : 1.0.0
  */
 public class Constants {
 

@@ -18,11 +18,9 @@ package org.sohagroup.persiancalendar.util;
 import java.util.Objects;
 
 /**
- * @service-package: org.sohagroup.persiancalendar.util
- * @service-name:
- * @author: moradi, moradi@sohagroup.org
- * @added-date: 3/21/24 : 3:29 PM
- * @since: 1.0.0
+ * @author ehsan
+ * @version 1
+ * @since 1.0.0
  */
 public class DateConverterConfig {
   private final String dateFormat;

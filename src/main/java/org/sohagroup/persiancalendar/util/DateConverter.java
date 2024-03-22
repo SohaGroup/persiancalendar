@@ -34,11 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @service-package: org.sohagroup.persiancalendar.util
- * @service-name:
- * @author: moradi, moradi@sohagroup.org
- * @added-date: 3/21/24 : 8:19 PM
- * @since: 1.0.0
+ * @author : moradi, moradi@sohagroup.org
+ * @since : 1.0.0
  */
 public class DateConverter {
   private final SimpleDateFormat dateFormat;
@@ -97,8 +94,9 @@ public class DateConverter {
   /**
    * This method convert the input Date and Time to Persian Calendar with default format yyyy/MM/dd
    *
-   * @param dateTimeNoZone
+   * @param dateTimeNoZone get Instant as input, with no-zone, calculated at UTC zone time
    * @return Persian date in format yyyy/MM/dd
+   * @exception NullPointerException if dateTimeNoZone is null
    */
   public String toPersianDate(Instant dateTimeNoZone) {
     Objects.requireNonNull(dateTimeNoZone, "dateTimeNoZone param must not be null");
@@ -108,7 +106,7 @@ public class DateConverter {
     /**
      * This method convert the input Date and Time to Persian Calendar with default format yyyy/MM/dd
      *
-     * @param dateTimeNoZone
+     * @param dateTimeNoZone input in {@link ZonedDateTime} in order to cnvert to persian
      * @return Persian date in format yyyy/MM/dd
      */
     public String toPersianDate(ZonedDateTime dateTimeNoZone) {
@@ -129,10 +127,25 @@ public class DateConverter {
     return datetimeFormat.format(java.util.Date.from(dateTimeWithZone));
   }
 
-  /**
-   * @param dateTimeWithZone
-   * @return
-   */
+    /**
+     * Converts the provided {@link Instant} representing a date and time to a string formatted according
+     * to the Persian calendar system, taking into account a specific time zone.
+     *
+     * This method accepts an {@link Instant} which represents a point on the time-line not tied
+     * to any specific time zone. It then converts this {@code Instant} into a {@link ZonedDateTime}
+     * in the Asia/Tehran time zone, and formats it as a string according to the Persian calendar system.
+     *
+     * The output format of the date-time string is determined by the {@code datetimeFormat} which should
+     * be initialized to format dates in the Persian calendar system. Ensure that {@code datetimeFormat}
+     * is properly set up for Persian date formatting prior to invoking this method.
+     *
+     * @param dateTimeWithZone The {@link Instant} to be converted, representing a specific moment
+     *                         in time in the UTC time zone.
+     * @return A {@code String} representing the date and time of the provided {@code Instant}
+     *         in the Persian calendar system and Asia/Tehran time zone. The format of the returned
+     *         string is dependent on the configuration of {@code datetimeFormat}.
+     * @throws NullPointerException if {@code dateTimeWithZone} is {@code null}.
+     */
   public String toPersianDateTimeWithZone(@NotNull Instant dateTimeWithZone) {
     Objects.requireNonNull(dateTimeWithZone, "dateTimeWithZone param must not be null");
     ZonedDateTime zonedDateTime =

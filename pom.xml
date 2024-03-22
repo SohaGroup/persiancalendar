@@ -19,9 +19,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sohagroup</groupId>
     <artifactId>persiancalendar</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-RELEASE</version>
     <name>persiancalendar</name>
-    <url>http://maven.apache.org</url>
+    <url>http://persiancalendar.sohagroup.org</url>
 
     <description>A library for converting dates between the Persian and Gregorian calendars</description>
 
@@ -39,6 +39,13 @@
             <email>moradi@sohagroup.org</email>
         </developer>
     </developers>
+
+    <scm>
+        <url>https://github.com/SohaGroup/persiancalendar</url>
+        <connection>scm:git:git://github.com/SohaGroup/persiancalendar.git</connection>
+        <developerConnection>scm:git:ssh://github.com:SohaGroup/persiancalendar.git</developerConnection>
+    </scm>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -102,22 +109,72 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <archive>
-                                <manifest>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
+                            <keyname>${gpg.keyname}</keyname> <!-- in setting.xml-->
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
