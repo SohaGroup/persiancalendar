@@ -16,9 +16,11 @@
 package org.sohagroup.persiancalendar.util;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.sohagroup.persiancalendar.Constants.ASIA_TEHRAN_ZONE;
 import static org.sohagroup.persiancalendar.Constants.UTC_TIME_ZONE;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -75,7 +77,21 @@ class DateConverterConfigTest {
     String expectedPersianDate = "1402/01/01";
 
     // Act
-    String result = dateConverter.convertToPersianDate(knownInstant);
+    String result = dateConverter.toPersianDate(knownInstant);
+    logger.debug("current date is : {}", result);
+    // Assert
+    assertEquals(
+        expectedPersianDate, result, "The conversion did not produce the expected Persian date.");
+  }
+  @Test
+  void convertToPersian_ReturnsExpectedDateFormatZoned() {
+    // Prepare a known Gregorian date as Instant
+    ZonedDateTime knownInstant = ZonedDateTime.of(2023, 3, 21, 0, 0, 0, 0, ZoneId.of(UTC_TIME_ZONE));
+    // Expected Persian date for 2023-03-21.
+    String expectedPersianDate = "1402/01/01";
+
+    // Act
+    String result = dateConverter.toPersianDate(knownInstant);
     logger.debug("current date is : {}", result);
     // Assert
     assertEquals(
@@ -92,7 +108,7 @@ class DateConverterConfigTest {
     String expectedPersianDate = "1402/01/01T03:30:00";
 
     // Act
-    String result = dateConverter.convertToPersianDateTime(knownInstant);
+    String result = dateConverter.toPersianDateTimeWithZone(knownInstant);
     logger.debug("converted date-time is : {}", result);
     // Assert
     assertEquals(
@@ -109,7 +125,7 @@ class DateConverterConfigTest {
     String expectedPersianDate = "1402/01/01T03:30:00";
 
     // Act
-    String result = dateConverter.toPersianDateTimeNoZone(knownInstant);
+    String result = dateConverter.toPersianDateTime(knownInstant);
     logger.debug("converted date-time is : {}", result);
     // Assert
     assertEquals(
@@ -141,7 +157,7 @@ class DateConverterConfigTest {
     String expectedPersianDate = "1402/01/01T00:00:00";
 
     // Act
-    String result = dateConverter.toPersianDateTimeNoZone(localDate);
+    String result = dateConverter.toPersianLocalDateTime(localDate);
     logger.debug("converted date-time is : {}", result);
     // Assert
     assertEquals(
@@ -161,7 +177,7 @@ class DateConverterConfigTest {
                 .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
                 .build());
     // Act
-    String result = converter.toPersianDateTimeNoZone(localDate);
+    String result = converter.toPersianLocalDateTime(localDate);
     logger.debug("converted date-time is : {}", result);
     // Assert
     assertEquals(
@@ -176,7 +192,7 @@ class DateConverterConfigTest {
     String expectedPersianDate = "1402/01/01T00:00:00";
     DateConverter converter = new DateConverter();
     // Act
-    String result = converter.toPersianDateTimeNoZone(localDate);
+    String result = converter.toPersianLocalDateTime(localDate);
     logger.debug("converted date-time is : {}", result);
     // Assert
     assertEquals(
@@ -191,7 +207,253 @@ class DateConverterConfigTest {
     assertThrows(
         NullPointerException.class,
         () -> {
-          dateConverter.toPersianDateTimeNoZone(localDate);
+          dateConverter.toPersianLocalDate(localDate);
         });
   }
+
+  @Test
+  void checkDateAsSTring2Persian(){
+      String date ="2024-03-20";
+      String expectedPersianDate = "1403/01/01";
+      String result = dateConverter.toPersianDate(date);
+      logger.debug("converted date-time is : {}", result);
+      assertEquals(expectedPersianDate, result);
+  }
+  @Test
+  void checkDateTimeAsSTring2Persian(){
+      String date ="2024-03-20T00:00:00";
+      String expectedPersianDate = "1403/01/01T00:00:00";
+      String result = dateConverter.toPersianDateTime(date);
+      logger.debug("converted date-time is : {}", result);
+      assertEquals(expectedPersianDate, result);
+  }
+  @Test
+  void checkDateTimeAsSTring2PersianAsStartOfDay(){
+      String date ="2024-03-20";
+      String expectedPersianDate = "1403/01/01T00:00:00";
+      String result = dateConverter.toPersianDateTimeStartOfDay(date);
+      logger.debug("converted date-time is : {}", result);
+      assertEquals(expectedPersianDate, result);
+  }
+
+    @Test
+    void checkDateAsSTring2Persian_ExceptionCheck(){
+        String date ="2024-3-20";
+        assertThrows(java.lang.IllegalArgumentException.class, () ->dateConverter.toPersianDate(date));
+    }
+    @Test
+    void checkDateAsSTring2Persian_ExceptionCheck2(){
+        String date =null;
+        assertThrows(java.lang.IllegalArgumentException.class, () ->dateConverter.toPersianDate(date));
+    }
+
+    @Test
+    void convertToPersian_LocalDate2PersianDate() {
+        // Prepare a known Gregorian date as Instant
+        LocalDate localDate = LocalDate.of(2023, 3, 21);
+        // Expected Persian date for 2023-03-21.
+        String expectedPersianDate = "1402/01/01";
+        DateConverter converter = new DateConverter();
+        // Act
+        String result = converter.toPersianLocalDate(localDate);
+        logger.debug("converted date-time is : {}", result);
+        // Assert
+        assertEquals(
+            expectedPersianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void convert2Persian_MinusDaysTest() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403/01/01";
+        // Expected Persian date for 2023-03-21.
+        String expectedPersianDate = "1402/12/29";
+        // Act
+        String result = dateConverter.minusDays(startDate, 1);
+        logger.debug("converted date-time is : {}", result);
+        // Assert
+        assertEquals(
+            expectedPersianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void convert2Persian_MinusDaysTest_withFormatter() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-01-01";
+        // Expected Persian date for 2023-03-21.
+        String expectedPersianDate = "1402-12-29";
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        String result = converter.minusDays(startDate, 1);
+        logger.debug("converted date-time is : {}", result);
+        // Assert
+        assertEquals(
+            expectedPersianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void convert2Persian_PlusDaysTest_withFormatter() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-12-29";
+        // Expected Persian date for 2023-03-21.
+        String expectedPersianDate = "1403-12-30";
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        String result = converter.plusDays(startDate, 1);
+        logger.debug("converted date-time is : {}", result);
+        // Assert
+        assertEquals(
+            expectedPersianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findDurationBetwwenTwoPersianDates() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-12-29";
+        // Expected Persian date for 2023-03-21.
+        String endDate= "1403-12-30";
+        Long expectedPersianDate = 1l;
+
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        Long numberOfDays = converter.localDateDuration(startDate, endDate, ChronoUnit.DAYS);
+        logger.debug("duration is : {}", numberOfDays);
+        // Assert
+        assertEquals(
+            expectedPersianDate, numberOfDays, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findDurationBetwwenTwoPersianDates_Seconds() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-12-29";
+        // Expected Persian date for 2023-03-21.
+        String endDate= "1403-12-30";
+        Long expectedPersianDate = 86400l;
+
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        Long numberOfDays = converter.localDateDuration(startDate, endDate, ChronoUnit.SECONDS);
+        logger.debug("duration is : {}", numberOfDays);
+        // Assert
+        assertEquals(
+            expectedPersianDate, numberOfDays, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findDurationBetwwenTwoPersianDatesTimes_Seconds() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-12-29 23:59:59";
+        // Expected Persian date for 2023-03-21.
+        String endDate= "1403-12-30 00:00:00";
+        Long expectedPersianDate = 1l;
+
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        Long numberOfDays = converter.localDateTimeDuration(startDate, endDate, ChronoUnit.SECONDS);
+        logger.debug("duration is : {}", numberOfDays);
+        // Assert
+        assertEquals(
+            expectedPersianDate, numberOfDays, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findDurationBetwwenTwoPersianDatesTimes_Days() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403-12-29 23:59:58";
+        // Expected Persian date for 2023-03-21.
+        String endDate= "1403-12-30 00:00:00";
+        Long expectedPersianDate = 0l;
+
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+
+        Long numberOfDays = converter.localDateTimeDuration(startDate, endDate, ChronoUnit.DAYS);
+        logger.debug("duration is : {}", numberOfDays);
+        // Assert
+        assertEquals(
+            expectedPersianDate, numberOfDays, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findDurationBetwwenTwoPersianDatesTimes_CENTURIES() {
+        // Prepare a known Gregorian date as String
+        String startDate = "621-12-29 23:59:58";
+        // Expected Persian date for 2023-03-21.
+        String endDate= "1403-12-30 00:00:00";
+        Long expectedPersianDate = 7l;
+
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        // Act
+        Long numberOfDays = converter.localDateTimeDuration(startDate, endDate, ChronoUnit.CENTURIES);
+        logger.debug("duration is : {}", numberOfDays);
+        // Assert
+        assertEquals(
+            expectedPersianDate, numberOfDays, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findGregorianDateFromPersianDate() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403/01/01";
+        // Expected Persian date for 2023-03-21.
+        LocalDate expectedGregorianDate = LocalDate.of(2024, 3, 20);
+        // Act
+        LocalDate result = dateConverter.toGregorianDate(startDate, ZoneId.of(ASIA_TEHRAN_ZONE));
+        logger.debug("Calculate date is : {}", result);
+        // Assert
+        assertEquals(
+            expectedGregorianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void findGregorianDateTimeFromPersianDate() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403/01/01 00:00:00";
+        // Expected Persian date for 2023-03-21.
+        LocalDateTime expectedGregorianDate = LocalDateTime.of(2024, 3, 20,0,0,0);
+        // Act
+        LocalDateTime result = dateConverter.toGregorianDateTime(startDate, ZoneId.of(ASIA_TEHRAN_ZONE));
+        logger.debug("Calculate date is : {}", result);
+        // Assert
+        assertEquals(
+            expectedGregorianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+    @Test
+    void testUsage() {
+        // Prepare a known Gregorian date as String
+        String startDate = "1403/01/01 00:00:00";
+        // Expected Persian date for 2023-03-21.
+        LocalDateTime expectedGregorianDate = LocalDateTime.of(2024, 3, 20,0,0,0);
+        // Act
+        LocalDateTime result = new DateConverter().toGregorianDateTime(startDate, ZoneId.of(ASIA_TEHRAN_ZONE));
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+            .withDateFormat("yyyy-MM-dd")
+            .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+            .build());
+        System.out.println(converter.toPersianLocalDate(LocalDate.now()));
+        System.out.println(converter.toPersianLocalDateTime(LocalDateTime.now()));
+        System.out.println(converter.localDateDuration("1400-01-01","1410-01-01", ChronoUnit.SECONDS));
+        System.out.println(converter.localDateTimeDuration("1400-01-01 00:10:34","1400-02-01 00:00:00", ChronoUnit.SECONDS));
+        logger.debug("Calculate date is : {}", result);
+        // Assert
+        assertEquals(
+            expectedGregorianDate, result, "The conversion did not produce the expected Persian date.");
+    }
 }

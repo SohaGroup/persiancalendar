@@ -23,25 +23,44 @@ To use `persianCalendar` in your Maven project, add the following dependency to 
 <dependency>
     <groupId>org.sohagroup</groupId>
     <artifactId>persianCalendar</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
-### Usage
+## Usage Examples
 
-Here's a quick example of how to convert a Gregorian date to a Persian date:
+After setting up `persianCalendar` in your project, you can use it to perform various date conversions and calculations. Here's how you can get started:
 
-```Java
-import org.sohagroup.persianCalendar.DateConverter;
+### Configuring the Converter
 
-public class Main {
-    public static void main(String[] args) {
-        String persianDate = DateConverter.gregorianToPersian("2021-03-21");
-        System.out.println(persianDate); // Output will be the equivalent Persian date
+First, create a `DateConverter` instance with custom date and time formats:
+
+```java
+public class Test{
+    public static void main(String[]atgs){
+        DateConverter converter = new DateConverter(new DateConverterConfig.Builder()
+        .withDateFormat("yyyy-MM-dd")
+        .withDateTimeFormat("yyyy-MM-dd HH:mm:ss")
+        .build());
     }
 }
 ```
+### Converting Dates to Persian
+Convert the current LocalDate and LocalDateTime to their Persian equivalents:
+```
+    System.out.println(converter.toPersianLocalDate(LocalDate.now())); // Convert current LocalDate
+    System.out.println(converter.toPersianLocalDateTime(LocalDateTime.now())); // Convert current LocalDateTime
+```
+### Calculating Duration Between Dates
+Calculate the duration between two Persian dates, both for LocalDate and LocalDateTime inputs:
+```
+// Calculate duration in seconds between two LocalDate values
+System.out.println(converter.localDateDuration("1400-01-01", "1410-01-01", ChronoUnit.SECONDS));
 
+// Calculate duration in seconds between two LocalDateTime values
+System.out.println(converter.localDateTimeDuration("1400-01-01 00:10:34", "1400-02-01 00:00:00", ChronoUnit.SECONDS));
+```
+This quick start guide should help you integrate and make the most of the persianCalendar library in your projects.
 ### Building from Source
 
 Clone the repository and navigate to the project directory:

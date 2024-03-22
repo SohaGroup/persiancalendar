@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sohagroup</groupId>
     <artifactId>persiancalendar</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>persiancalendar</name>
     <url>http://maven.apache.org</url>
 
