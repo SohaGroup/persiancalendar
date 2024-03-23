@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sohagroup</groupId>
     <artifactId>persiancalendar</artifactId>
-    <version>1.0.2-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
     <name>persiancalendar</name>
     <url>http://persiancalendar.sohagroup.org</url>
 
@@ -177,6 +177,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
