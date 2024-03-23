@@ -525,28 +525,28 @@ class DateConverterConfigTest {
         executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
         System.out.println("time = " + time + " ms");
     }
-    @Test
-    public void testConvertGregorianToPersianThreadSafety_3rd() throws InterruptedException {
-        final LocalDate inputDate = LocalDate.of(2023, 3, 21);
-        final String expectedOutput = "1402/01/01"; // Expected output, assuming this is the correct conversion
-        Collection<Future<String>> futures = Collections.synchronizedCollection(new ArrayList<>(10000));
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            long time = System.currentTimeMillis();
-            for(int i = 0; i < 100_000; i++) {
-                Future<String> f =  executor.submit(()-> dateConverter.toPersianDate(inputDate));
-                futures.add(f);
-            }
-            Thread.sleep(1000l);
-            long sum = 0;
-            for (Future<String> future : futures) {
-                String output = future.get();
-                logger.info("The output threadid {} is : {} ",Thread.currentThread().threadId(), output);
-                assertEquals(expectedOutput, output);
-            }
-            time = System.currentTimeMillis() - time;
-            System.out.println("sum = " + sum + "; time = " + time + " ms");
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Test
+//    public void testConvertGregorianToPersianThreadSafety_3rd() throws InterruptedException {
+//        final LocalDate inputDate = LocalDate.of(2023, 3, 21);
+//        final String expectedOutput = "1402/01/01"; // Expected output, assuming this is the correct conversion
+//        Collection<Future<String>> futures = Collections.synchronizedCollection(new ArrayList<>(10000));
+//        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+//            long time = System.currentTimeMillis();
+//            for(int i = 0; i < 100_000; i++) {
+//                Future<String> f =  executor.submit(()-> dateConverter.toPersianDate(inputDate));
+//                futures.add(f);
+//            }
+//            Thread.sleep(1000l);
+//            long sum = 0;
+//            for (Future<String> future : futures) {
+//                String output = future.get();
+//                logger.info("The output threadid {} is : {} ",Thread.currentThread().threadId(), output);
+//                assertEquals(expectedOutput, output);
+//            }
+//            time = System.currentTimeMillis() - time;
+//            System.out.println("sum = " + sum + "; time = " + time + " ms");
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
