@@ -33,7 +33,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+/**This calss convert  Persian to GregorianCalendar and vice-versa.
+ * It's mainly base on IBM ICU4j and Java Internal java.time
+ * Main goal of this is to ease of use of ICU4j and cover its problem in thread-safety.
  * @author : moradi, moradi@sohagroup.org
  * @since : 1.0.0
  */
@@ -77,7 +79,7 @@ public class DateConverter {
    * @return persian date in format yyyy/MM/dd'T'HH:mm:ss for example datetime 2024-03-21 19:58:58
    *     converted to 1403/01/02T18:58:58
    */
-  public String getCurrentDateTime() {
+  public synchronized String getCurrentDateTime() {
     return datetimeFormat.format(java.util.Date.from(Instant.now()));
   }
 
@@ -87,7 +89,7 @@ public class DateConverter {
    * @return persian date in format yyyy/MM/dd for example datetime 2024-03-21 converted to
    *     1403/01/02
    */
-  public String getCurrentDate() {
+  public synchronized  String getCurrentDate() {
     return datetimeFormat.format(java.util.Date.from(Instant.now()));
   }
 
@@ -98,7 +100,7 @@ public class DateConverter {
    * @return Persian date in format yyyy/MM/dd
    * @exception NullPointerException if dateTimeNoZone is null
    */
-  public String toPersianDate(Instant dateTimeNoZone) {
+  public synchronized String toPersianDate(Instant dateTimeNoZone) {
     Objects.requireNonNull(dateTimeNoZone, "dateTimeNoZone param must not be null");
     return dateFormat.format(java.util.Date.from(dateTimeNoZone));
   }
@@ -109,7 +111,7 @@ public class DateConverter {
      * @param dateTimeNoZone input in {@link ZonedDateTime} in order to cnvert to persian
      * @return Persian date in format yyyy/MM/dd
      */
-    public String toPersianDate(ZonedDateTime dateTimeNoZone) {
+    public synchronized String toPersianDate(ZonedDateTime dateTimeNoZone) {
         Objects.requireNonNull(dateTimeNoZone, "dateTimeNoZone param must not be null");
         return toPersianDate(dateTimeNoZone.toInstant());
     }
@@ -122,7 +124,7 @@ public class DateConverter {
    *     (midnight) is (03:30:00) in Tehran.
    * @return Persian date in format yyyy/MM/dd'T'HH:mm:ss
    */
-  public String toPersianDateTime(@NotNull Instant dateTimeWithZone) {
+  public synchronized String toPersianDateTime(@NotNull Instant dateTimeWithZone) {
     Objects.requireNonNull(dateTimeWithZone, "dateTimeWithZone param must not be null");
     return datetimeFormat.format(java.util.Date.from(dateTimeWithZone));
   }
@@ -146,7 +148,7 @@ public class DateConverter {
      *         string is dependent on the configuration of {@code datetimeFormat}.
      * @throws NullPointerException if {@code dateTimeWithZone} is {@code null}.
      */
-  public String toPersianDateTimeWithZone(@NotNull Instant dateTimeWithZone) {
+  public synchronized String toPersianDateTimeWithZone(@NotNull Instant dateTimeWithZone) {
     Objects.requireNonNull(dateTimeWithZone, "dateTimeWithZone param must not be null");
     ZonedDateTime zonedDateTime =
         ZonedDateTime.ofInstant(dateTimeWithZone, ZoneId.of(ASIA_TEHRAN_ZONE));
@@ -161,7 +163,7 @@ public class DateConverter {
    * @return Persian Date of input
    * @since 1.0.0
    */
-  public String toPersianDateTimeNoZone(@NotNull LocalDateTime localDateTime) {
+  public synchronized String  toPersianDateTimeNoZone(@NotNull LocalDateTime localDateTime) {
     Objects.requireNonNull(localDateTime, "localDateTime param must not be null");
     return datetimeFormat.format(
         java.util.Date.from(Instant.from(localDateTime.atZone(ZoneId.of(ASIA_TEHRAN_ZONE)))));
@@ -175,11 +177,11 @@ public class DateConverter {
    * @return Persian Date of input
    * @since 1.0.0
    */
-  public String toPersianDateTime(@NotNull LocalDate localDate) {
+  public synchronized String toPersianDateTime(@NotNull LocalDate localDate) {
     Objects.requireNonNull(localDate, "localDateTime param must not be null");
     return toPersianDateTimeNoZone(localDate.atStartOfDay());
   }
-  public String toPersianDate(@NotNull LocalDate localDate) {
+  public synchronized String toPersianDate(@NotNull LocalDate localDate) {
     Objects.requireNonNull(localDate, "localDateTime param must not be null");
     return dateFormat.format(java.util.Date.from(localDate.atStartOfDay(ZoneId.of(ASIA_TEHRAN_ZONE)).toInstant()));
   }
@@ -193,17 +195,17 @@ public class DateConverter {
    * @return Persian Date of input
    * @since 1.0.0
    */
-  public String toPersianLocalDate(@NotNull LocalDate localDate) {
+  public synchronized String toPersianLocalDate(@NotNull LocalDate localDate) {
     Objects.requireNonNull(localDate, "localDate param must not be null");
     return dateFormat.format(
         java.util.Date.from(Instant.from(localDate.atStartOfDay(ZoneId.of(ASIA_TEHRAN_ZONE)))));
   }
-  public String toPersianLocalDateTime(@NotNull LocalDate localDate) {
+  public synchronized String toPersianLocalDateTime(@NotNull LocalDate localDate) {
     Objects.requireNonNull(localDate, "localDate param must not be null");
     return datetimeFormat.format(
         java.util.Date.from(Instant.from(localDate.atStartOfDay(ZoneId.of(ASIA_TEHRAN_ZONE)))));
   }
-  public String toPersianLocalDateTime(@NotNull LocalDateTime localDateTime) {
+  public synchronized String toPersianLocalDateTime(@NotNull LocalDateTime localDateTime) {
     Objects.requireNonNull(localDateTime, "localDate param must not be null");
     return datetimeFormat.format(
         java.util.Date.from(Instant.from(localDateTime.atZone(ZoneId.of(ASIA_TEHRAN_ZONE)))));
@@ -215,7 +217,7 @@ public class DateConverter {
      * @param gregorianDate date as String like 2023-11-01 (ISO_LOCAL_DATE)
      * @return Persian equivalent of date as format of yyyy/MM/dd
      */
-  public String toPersianDate(String gregorianDate) {
+  public synchronized String toPersianDate(String gregorianDate) {
       if (gregorianDate == null || gregorianDate.trim().isEmpty()) {
           throw new IllegalArgumentException("Input date string cannot be null or empty.");
       }
@@ -235,7 +237,7 @@ public class DateConverter {
      * @param gregorianDateTime date as String like 2023-11-01 (ISO_LOCAL_DATE_TIME)
      * @return Persian equivalent of date as format of yyyy/MM/dd
      */
-  public String toPersianDateTime(String gregorianDateTime) {
+  public synchronized String toPersianDateTime(String gregorianDateTime) {
       if (gregorianDateTime == null || gregorianDateTime.trim().isEmpty()) {
           throw new IllegalArgumentException("Input date string cannot be null or empty.");
       }
@@ -256,7 +258,7 @@ public class DateConverter {
      * @param gregorianDateTime date as String like 2023-11-01 (ISO_LOCAL_DATE)
      * @return Persian equivalent of date as format of yyyy/MM/ddTHH:mm:ss or any format specified in datetimeFormat
      */
-  public String toPersianDateTimeStartOfDay(String gregorianDateTime) {
+  public synchronized String toPersianDateTimeStartOfDay(String gregorianDateTime) {
       if (gregorianDateTime == null || gregorianDateTime.trim().isEmpty()) {
           throw new IllegalArgumentException("Input date string cannot be null or empty.");
       }
@@ -277,7 +279,7 @@ public class DateConverter {
      * @param days as {@link Long} to minus start of current day
      * @return Persian date formatted by dateFormat calculated persianDate-days
      */
-  public String minusDays(String persianDate, long days){
+  public synchronized String minusDays(String persianDate, long days){
 
       ZonedDateTime zonedDateTime = null;
       try {
@@ -294,7 +296,7 @@ public class DateConverter {
      * @param days as {@link Long} to plus start of current day
      * @return Persian date formatted by dateFormat calculated persianDate+days
      */
-  public String plusDays(String persianDate, long days){
+  public synchronized String plusDays(String persianDate, long days){
 
       ZonedDateTime zonedDateTime = null;
       try {
@@ -312,7 +314,7 @@ public class DateConverter {
      * @param unit as Unit to fetch Difference which defined in {@link ChronoUnit}
      * @return number of Days between startPersianDate and endPersianDate
      */
-  public Long localDateDuration(String startPersianDate, String endPersianDate, ChronoUnit unit){
+  public synchronized Long localDateDuration(String startPersianDate, String endPersianDate, ChronoUnit unit){
       try {
           ZonedDateTime startZonedDateTime = ZonedDateTime.ofInstant(dateFormat.parse(startPersianDate).toInstant(), ZoneId.systemDefault());
           ZonedDateTime endZoneDateTime = ZonedDateTime.ofInstant(dateFormat.parse(endPersianDate).toInstant(), ZoneId.systemDefault());
@@ -328,7 +330,7 @@ public class DateConverter {
      * @param unit as Unit to fetch Difference which defined in {@link ChronoUnit}
      * @return number of Days between startPersianDate and endPersianDate
      */
-  public Long localDateTimeDuration(String startPersianDate, String endPersianDate, ChronoUnit unit){
+  public synchronized Long localDateTimeDuration(String startPersianDate, String endPersianDate, ChronoUnit unit){
       try {
           ZonedDateTime startZonedDateTime = ZonedDateTime.ofInstant(datetimeFormat.parse(startPersianDate).toInstant(), ZoneId.systemDefault());
           ZonedDateTime endZoneDateTime = ZonedDateTime.ofInstant(datetimeFormat.parse(endPersianDate).toInstant(), ZoneId.systemDefault());
@@ -358,7 +360,7 @@ public class DateConverter {
      *                                  to the expected format, indicating that the string is malformed or does not
      *                                  accurately represent a valid Persian date.
      */
-    public LocalDate toGregorianDate(String persianDate, ZoneId zoneId) {
+    public synchronized LocalDate toGregorianDate(String persianDate, ZoneId zoneId) {
         Objects.requireNonNull(zoneId, "zoneId param must not be null");
         try {
             ZonedDateTime date = ZonedDateTime.ofInstant(dateFormat.parse(persianDate).toInstant(), zoneId);
@@ -382,7 +384,7 @@ public class DateConverter {
      * @throws IllegalArgumentException If the {@code persianDate} cannot be parsed according to the expected format,
      *                                  indicating the string is either malformed or does not represent a valid Persian date.
      */
-    public LocalDateTime toGregorianDateTime(String persianDate, ZoneId zoneId) {
+    public synchronized LocalDateTime toGregorianDateTime(String persianDate, ZoneId zoneId) {
         Objects.requireNonNull(persianDate, "dateTimeNoZone param must not be null");
         try {
             ZonedDateTime date = ZonedDateTime.ofInstant(datetimeFormat.parse(persianDate).toInstant(), zoneId);

@@ -16,11 +16,12 @@
 package org.sohagroup.persiancalendar.util;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.sohagroup.persiancalendar.Constants.ASIA_TEHRAN_ZONE;
-import static org.sohagroup.persiancalendar.Constants.UTC_TIME_ZONE;
+import static org.sohagroup.persiancalendar.Constants.*;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -455,5 +456,97 @@ class DateConverterConfigTest {
         // Assert
         assertEquals(
             expectedGregorianDate, result, "The conversion did not produce the expected Persian date.");
+    }
+
+    @Test
+    public void testConvertGregorianToPersianThreadSafetyLocalDateTime() throws InterruptedException {
+        String expectedOutput = "1403/01/01T00:00:00";
+        // Expected Persian date for 2023-03-21.
+        long time = System.currentTimeMillis();
+        LocalDateTime inputDate = LocalDateTime.of(2024, 3, 20,0,0,0);
+        int numberOfThreads = 2000;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+        List<String> outputs = new ArrayList<>();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+      executorService.submit(
+          () -> {
+            try {
+              // Call the method from multiple threads
+                String output = dateConverter.toPersianLocalDateTime(inputDate);
+                logger.info("Converted date-time is : {}", output);
+                  outputs.add(output);
+            } finally {
+              latch.countDown();
+            }
+          });
+        }
+
+        latch.await(); // Wait for all threads to finish
+
+        // Check that all outputs are as expected
+        outputs.forEach(output -> assertEquals(expectedOutput, output));
+
+        executorService.shutdown();
+        executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+        time = System.currentTimeMillis() - time;
+        System.out.println("time = " + time + " ms");
+    }
+    @Test
+    public void testConvertGregorianToPersianThreadSafety() throws InterruptedException {
+        final LocalDate inputDate = LocalDate.of(2023, 3, 21);
+        final String expectedOutput = "1402/01/01"; // Expected output, assuming this is the correct conversion
+        long time = System.currentTimeMillis();
+        int numberOfThreads = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(numberOfThreads);
+        List<String> outputs = new ArrayList<>();
+        for (int i = 0; i < numberOfThreads; i++) {
+        executorService.submit(
+          () -> {
+            try {
+              // Call the method from multiple threads
+                String output = dateConverter.toPersianDate(inputDate);
+                logger.info("Converted date-time is : {}", output);
+                  outputs.add(output);
+            } finally {
+              latch.countDown();
+            }
+          });
+        }
+
+        latch.await(); // Wait for all threads to finish
+        time = System.currentTimeMillis() - time;
+
+        // Check that all outputs are as expected
+        outputs.forEach(output -> assertEquals(expectedOutput, output));
+        executorService.shutdown();
+        executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+        System.out.println("time = " + time + " ms");
+    }
+    @Test
+    public void testConvertGregorianToPersianThreadSafety_3rd() throws InterruptedException {
+        final LocalDate inputDate = LocalDate.of(2023, 3, 21);
+        final String expectedOutput = "1402/01/01"; // Expected output, assuming this is the correct conversion
+        Collection<Future<String>> futures = Collections.synchronizedCollection(new ArrayList<>(10000));
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            long time = System.currentTimeMillis();
+            for(int i = 0; i < 100_000; i++) {
+                Future<String> f =  executor.submit(()-> dateConverter.toPersianDate(inputDate));
+                futures.add(f);
+            }
+            Thread.sleep(1000l);
+            long sum = 0;
+            for (Future<String> future : futures) {
+                String output = future.get();
+                logger.info("The output threadid {} is : {} ",Thread.currentThread().threadId(), output);
+                assertEquals(expectedOutput, output);
+            }
+            time = System.currentTimeMillis() - time;
+            System.out.println("sum = " + sum + "; time = " + time + " ms");
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
