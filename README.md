@@ -17,12 +17,12 @@ formatting Persian dates, and handling time zones specifically for applications 
 
 ### Installation
 
-To use `persianCalendar` in your Maven project, add the following dependency to your `pom.xml`:
+To use `persiancalendar` in your Maven project, add the following dependency to your `pom.xml`:
 
 ```xml
 <dependency>
     <groupId>org.sohagroup</groupId>
-    <artifactId>persianCalendar</artifactId>
+    <artifactId>persiancalendar</artifactId>
     <version>1.1.0-RELEASE</version>
 </dependency>
 ```
