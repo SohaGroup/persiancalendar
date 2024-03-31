@@ -31,4 +31,13 @@ public class Constants {
   public static final String ASIA_TEHRAN_ZONE = "Asia/Tehran";
   public static final String DEFAULT_PERSIAN_DATE_TIME_FORMAT = "yyyy/MM/dd'T'HH:mm:ss";
   public static final String DEFAULT_PERSIAN_DATE_FORMAT = "yyyy/MM/dd";
+
+
+  //Message
+  public static final String LOCALDATE_MUST_NOT_BE_NULL_MESSAGE="localDate param must not be null";
+  public static final String LOCALDATE_TIME_MUST_NOT_BE_NULL_MESSAGE="localDateTime param must not be null";
+  public static final String INPUT_DATE_NUT_NULL_MESSAGE="Input date string cannot be null or empty.";
+  public static final String ERROR_IN_PARSING_INPUT_DATE_MESSAGE="Error parsing the input date string: ";
+  public static final String DATE_TIME_ZONE_MUST_NOT_BE_NULL_MESSAGE="dateTimeNoZone param must not be null";
+
 }

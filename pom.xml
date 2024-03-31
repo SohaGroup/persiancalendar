@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sohagroup</groupId>
     <artifactId>persiancalendar</artifactId>
-    <version>1.1.0-RELEASE</version>
+    <version>1.1.1-RELEASE</version>
     <name>persiancalendar</name>
     <url>http://persiancalendar.sohagroup.org</url>
 
@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <icu.version>72.1</icu.version>
+        <icu.version>74.2</icu.version>
         <slf4j.api.version>1.7.32</slf4j.api.version>
         <logback.classic.version>1.2.3</logback.classic.version>
         <logback.core.version>1.2.3</logback.core.version>
